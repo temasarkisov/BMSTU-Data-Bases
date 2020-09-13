@@ -1,0 +1,74 @@
+circuitId,circuitRef,name,location,country,lat,lng,alt
+1,albert_park,Albert park grand prix circuit,Melbourne,Australia,-37.8497,144.968,10
+2,sepang,Sepang international circuit,Kuala lumpur,Malaysia,2.76083,101.738,0
+3,bahrain,Bahrain international circuit,Sakhir,Bahrain,26.0325,50.5106,0
+4,catalunya,Circuit de barcelona-catalunya,Montmelì ,Spain,41.57,2.26111,0
+5,istanbul,Istanbul park,Istanbul,Turkey,40.9517,29.405,0
+6,monaco,Circuit de monaco,Monte-carlo,Monaco,43.7347,7.42056,0
+7,villeneuve,Circuit gilles villeneuve,Montreal,Canada,45.5,-73.5228,0
+8,magny_cours,Circuit de nevers magny-cours,Magny cours,France,46.8642,3.16361,0
+9,silverstone,Silverstone circuit,Silverstone,Uk,52.0786,-1.01694,0
+10,hockenheimring,Hockenheimring,Hockenheim,Germany,49.3278,8.56583,0
+11,hungaroring,Hungaroring,Budapest,Hungary,47.5789,19.2486,0
+12,valencia,Valencia street circuit,Valencia,Spain,39.4589,-0.331667,0
+13,spa,Circuit de spa-francorchamps,Spa,Belgium,50.4372,5.97139,0
+14,monza,Autodromo nazionale di monza,Monza,Italy,45.6156,9.28111,0
+15,marina_bay,Marina bay street circuit,Marina bay,Singapore,1.2914,103.864,0
+16,fuji,Fuji speedway,Oyama,Japan,35.3717,138.927,0
+17,shanghai,Shanghai international circuit,Shanghai,China,31.3389,121.22,0
+18,interlagos,Autì dromo josì© carlos pace,Sì£o paulo,Brazil,-23.7036,-46.6997,0
+19,indianapolis,Indianapolis motor speedway,Indianapolis,Usa,39.795,-86.2347,0
+20,nurburgring,Nì rburgring,Nì rburg,Germany,50.3356,6.9475,0
+21,imola,Autodromo enzo e dino ferrari,Imola,Italy,44.3439,11.7167,0
+22,suzuka,Suzuka circuit,Suzuka,Japan,34.8431,136.541,0
+23,osterreichring,A1-ring,Spielburg,Austria,47.2197,14.7647,0
+24,yas_marina,Yas marina circuit,Abu dhabi,Uae,24.4672,54.6031,0
+25,galvez,Autì dromo juan y oscar gìálvez,Buenos aires,Argentina,-34.6943,-58.4593,0
+26,jerez,Circuito de jerez,Jerez de la frontera,Spain,36.7083,-6.03417,0
+27,estoril,Autì dromo do estoril,Estoril,Portugal,38.7506,-9.39417,0
+28,okayama,Okayama international circuit,Okayama,Japan,34.915,134.221,0
+29,adelaide,Adelaide street circuit,Adelaide,Australia,-34.9272,138.617,0
+30,kyalami,Kyalami,Midrand,South africa,-25.9894,28.0767,0
+31,donington,Donington park,Castle donington,Uk,52.8306,-1.37528,0
+32,rodriguez,Autì dromo hermanos rodrì guez,Mexico city,Mexico,19.4042,-99.0907,0
+33,phoenix,Phoenix street circuit,Phoenix,Usa,33.4479,-112.075,0
+34,ricard,Circuit paul ricard,Le castellet,France,43.2506,5.79167,0
+35,yeongam,Korean international circuit,Yeongam county,Korea,34.7333,126.417,0
+36,jacarepagua,Autì dromo internacional nelson piquet,Rio de janeiro,Brazil,-22.9756,-43.395,0
+37,detroit,Detroit street circuit,Detroit,Usa,42.3298,-83.0401,0
+38,brands_hatch,Brands hatch,Kent,Uk,51.3569,0.263056,0
+39,zandvoort,Circuit park zandvoort,Zandvoort,Netherlands,52.3888,4.54092,0
+40,zolder,Zolder,Heusden-zolder,Belgium,50.9894,5.25694,0
+41,dijon,Dijon-prenois,Dijon,France,47.3625,4.89913,0
+42,dallas,Fair park,Dallas,Usa,32.7774,-96.7587,0
+43,long_beach,Long beach,California,Usa,33.7651,-118.189,0
+44,las_vegas,Las vegas street circuit,Nevada,Usa,36.1162,-115.174,0
+45,jarama,Jarama,Madrid,Spain,40.6171,-3.58558,0
+46,watkins_glen,Watkins glen,New york state,Usa,42.3369,-76.9272,0
+47,anderstorp,Scandinavian raceway,Anderstorp,Sweden,57.2653,13.6042,0
+48,mosport,Mosport international raceway,Ontario,Canada,44.0481,-78.6756,0
+49,montjuic,Montjuìøc,Barcelona,Spain,41.3664,2.15167,0
+50,nivelles,Nivelles-baulers,Brussels,Belgium,50.6211,4.32694,0
+51,charade,Charade circuit,Clermont-ferrand,France,45.7472,3.03889,0
+52,tremblant,Circuit mont-tremblant,Quebec,Canada,46.1877,-74.6099,0
+53,essarts,Rouen-les-essarts,Rouen,France,49.3306,1.00458,0
+54,lemans,Le mans,Le mans,France,47.95,0.224231,0
+55,reims,Reims-gueux,Reims,France,49.2542,3.93083,0
+56,george,Prince george circuit,Eastern cape province,South africa,-33.0486,27.8736,0
+57,zeltweg,Zeltweg,Styria,Austria,47.2039,14.7478,0
+58,aintree,Aintree,Liverpool,Uk,53.4769,-2.94056,0
+59,boavista,Circuito da boavista,Oporto,Portugal,41.1705,-8.67325,0
+60,riverside,Riverside international raceway,California,Usa,33.937,-117.273,0
+61,avus,Avus,Berlin,Germany,52.4806,13.2514,0
+62,monsanto,Monsanto park circuit,Lisbon,Portugal,38.7197,-9.20306,0
+63,sebring,Sebring international raceway,Florida,Usa,27.4547,-81.3483,0
+64,ain-diab,Ain diab,Casablanca,Morocco,33.5786,-7.6875,0
+65,pescara,Pescara circuit,Pescara,Italy,42.475,14.1508,0
+66,bremgarten,Circuit bremgarten,Bern,Switzerland,46.9589,7.40194,0
+67,pedralbes,Circuit de pedralbes,Barcelona,Spain,41.3903,2.11667,0
+68,buddh,Buddh international circuit,Uttar pradesh,India,28.3487,77.5331,0
+69,americas,Circuit of the americas,Austin,Usa,30.1328,-97.6411,0
+70,red_bull_ring,Red bull ring,Spielburg,Austria,47.2197,14.7647,0
+71,sochi,Sochi autodrom,Sochi,Russia,43.4057,39.9578,0
+72,port_imperial,Port imperial street circuit,New jersey,Usa,40.7769,-74.0111,0
+73,BAK,Baku city circuit,Baku,Azerbaijan,40.3725,49.8533,0
