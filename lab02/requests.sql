@@ -1,20 +1,20 @@
 --psql -U postgres -h 127.0.0.1 -d formula_1 -f requests.sql
 
---1
+--1 Инструкция SELECT, использующая предикат сравнения.
 SELECT DISTINCT D.forename, D.surname, R.grid, R.position_order
 FROM result AS R JOIN driver AS D ON R.driver_id = D.driver_id 
 WHERE D.forename = 'Lewis' AND D.surname = 'Hamilton' 
 
---2
+--2 Инструкция SELECT, использующая предикат BETWEEN.
 SELECT DISTINCT driver_id, code, forename, surname, dob 
 FROM driver
 WHERE dob BETWEEN '1997-01-01' AND '2000-01-01'
 
---3
+--3 Инструкция SELECT, использующая предикат LIKE.
 SELECT DISTINCT forename, surname FROM driver 
 WHERE surname LIKE '%ilton'
 
---4 
+--4 Инструкция SELECT, использующая предикат IN с вложенным подзапросом.
 SELECT RE.race_id, RE.driver_id, D.surname, RE.constructor_id, RE.fastest_lap, RE.fastest_lap_speed
 FROM result AS RE JOIN driver AS D ON RE.driver_id = D.driver_id 
 WHERE race_id IN (
@@ -23,7 +23,7 @@ WHERE race_id IN (
     WHERE circuit_id = 1
 ) AND RE.position = 1 AND RE.fastest_lap_speed IS NOT NULL
 
---5
+--5 Инструкция SELECT, использующая предикат EXISTS с вложенным подзапросом.
 SELECT C.circuit_id, C.name 
 FROM circuit AS C
 WHERE EXISTS (
@@ -33,7 +33,7 @@ WHERE EXISTS (
     WHERE R.time IS NOT NULL
 )
 
---6
+--6 Инструкция SELECT, использующая предикат сравнения с квантором.
 SELECT D.driver_id, D.surname, L.time
 FROM driver AS D JOIN lap_time AS L ON D.driver_id = L.driver_id
 WHERE L.time < ALL (
@@ -42,7 +42,7 @@ WHERE L.time < ALL (
     WHERE L.lap = 1 
 ) AND L.lap = 2
 
---7 
+--7 Инструкция SELECT, использующая агрегатные функции в выражениях столбцов.
 SELECT AVG(PitStopTime) AS "Average Pit Stop Time", SUM(PitStopTime) / COUNT(driver_id) AS "Average Pit Stop Time"
 FROM (
     SELECT driver_id, SUM(milliseconds)/COUNT(driver_id) AS PitStopTime
@@ -58,7 +58,7 @@ SELECT race_id, SUM(milliseconds)/COUNT(race_id) AS PitStopTime
 FROM pit_stop 
 GROUP BY race_id
 
---8 
+--8 Инструкция SELECT, использующая скалярные подзапросы в выражениях столбцов.
 SELECT race.race_id, race.name, (
     SELECT AVG(result.laps)
     FROM result 
@@ -71,7 +71,7 @@ SELECT race.race_id, race.name, (
 FROM race
 WHERE race.circuit_id = 1
 
---9
+--9 Инструкция SELECT, использующая простое выражение CASE.
 SELECT race.race_id, race.name, 
 CASE race.date
     WHEN CURRENT_DATE THEN 'This Year'
@@ -80,7 +80,7 @@ CASE race.date
     END AS "When"
 FROM race
 
---10
+--10 Инструкция SELECT, использующая поисковое выражение CASE.
 SELECT driver_id, forename, surname,
 CASE
     WHEN dob > '2000-01-01' THEN '< 20'
@@ -91,14 +91,14 @@ CASE
     END AS Age 
 FROM driver
 
---11
+--11 Создание новой временной локальной таблицы из результирующего набора данных инструкции SELECT.
 SELECT result.driver_id, driver.forename, driver.surname, AVG(result.milliseconds) AS avg_time
 INTO average_time
 FROM result JOIN driver ON result.driver_id = driver.driver_id
 WHERE result.milliseconds IS NOT NULL
 GROUP BY result.driver_id, driver.forename, driver.surname
 
---12
+--12 Инструкция SELECT, использующая вложенные коррелированные подзапросы в качестве производных таблиц в предложении FROM.
 SELECT result.result_id AS "ResultIdMax", TS.timeSum as MaxPitStopTime
 FROM result JOIN (
     SELECT pit_stop.race_id, SUM(pit_stop.milliseconds) AS timeSum 
@@ -117,7 +117,7 @@ FROM result JOIN (
     LIMIT 1
     ) AS TA ON result.race_id = TA.race_id
 
---13
+--13 Инструкция SELECT, использующая вложенные подзапросы с уровнем вложенности 3.
 SELECT driver.surname as "Min Time"
 FROM driver
 WHERE driver.driver_id = (
@@ -150,13 +150,13 @@ WHERE driver.driver_id = (
     )
 )
 
---14 
+--14 Инструкция SELECT, консолидирующая данные с помощью предложения GROUP BY, но без предложения HAVING.
 SELECT D.driver_id, D.surname, R.milliseconds AS "Time", AVG(R.milliseconds) AS "Average Time", MIN(R.milliseconds) AS "Min Time"
 FROM driver AS D LEFT OUTER JOIN result AS R ON D.driver_id = R.driver_id
 WHERE R.position = 1
 GROUP BY D.driver_id, D.surname, R.milliseconds
 
---15 
+--15 Инструкция SELECT, консолидирующая данные с помощью предложения GROUP BY и предложения HAVING.
 SELECT result.race_id, race.name, AVG(result.fastest_lap_speed) AS "Average Fastest Lap Speed"
 FROM result JOIN race ON result.race_id = race.race_id
 GROUP BY result.race_id, race.name
@@ -165,11 +165,11 @@ HAVING AVG(result.fastest_lap_speed) > (
     FROM result
 )
 
---16
+--16 Однострочная инструкция INSERT, выполняющая вставку в таблицу одной строки значений.
 INSERT INTO driver (driver_id, driver_ref, driver_number, code, forename, surname, dob, nationality) 
 VALUES (844, 'sarkisov', 4, 'SAR', 'Artem', 'Sarkisov', TO_DATE('20000612', 'YYYYMMDD'), 'Russian')
 
---17 
+--17 Многострочная инструкция INSERT, выполняющая вставку в таблицу результирующего набора данных вложенного подзапроса.
 INSERT INTO race (circuit_id, race_id, round, name, date, time) 
 SELECT (        
     SELECT MAX(circuit_id) 
@@ -177,12 +177,12 @@ SELECT (
     WHERE country = 'France'
 ), 1010, 1, 'France Inserted Grand Prix', TO_DATE('20000612', 'YYYYMMDD'), TO_TIMESTAMP('06:00:00', 'HH:MI:SS')
 
---18
+--18 Простая инструкция UPDATE.
 UPDATE driver
 SET nationality = 'Israelis' 
 WHERE surname = 'Sarkisov'
 
---19
+--19 Инструкция UPDATE со скалярным подзапросом в предложении SET.
 UPDATE driver 
 SET dob = (
     SELECT MAX(dob) 
@@ -191,11 +191,11 @@ SET dob = (
 )
 WHERE surname = 'Sarkisov'
 
---20
+--20 Простая инструкция DELETE.
 DELETE FROM result
 WHERE driver_id IS NULL
 
---21
+--21 Инструкция DELETE с вложенным коррелированным подзапросом в предложении WHERE.
 DELETE FROM driver 
 WHERE driver_id IN
 (
@@ -204,7 +204,7 @@ WHERE driver_id IN
     WHERE result.status_id IS NULL
 )
 
---22
+--22 Инструкция SELECT, использующая простое обобщенное табличное выражение
 WITH CTE (driver_id, fastest_lap) AS
 (
     SELECT driver_id, fastest_lap AS RaceTime
@@ -215,7 +215,7 @@ WITH CTE (driver_id, fastest_lap) AS
 SELECT AVG(fastest_lap) AS "Average Race Time" 
 FROM CTE
 
---23
+--23 Инструкция SELECT, использующая рекурсивное обобщенное табличное выражение.
 -- Every driver which was overtaken by driver with id equals 3
 CREATE TABLE overtaking (
     overtaken_driver_id smallint NOT NULL,
@@ -245,10 +245,12 @@ VALUES (1, 2, 3, 4),
 WITH RECURSIVE RecursiveOvertaking (overtaken_driver_id, overtook_driver_id, circuit_id, circuit_turn_numebr)
 AS
 (
+    -- Определение закрепленного элемента
     SELECT overtaken_driver_id, overtook_driver_id, circuit_id, circuit_turn_numebr
     FROM overtaking ot
-    WHERE ot.overtaken_driver_id = 3
+    WHERE ot.overtook_driver_id = 3
     UNION ALL
+    
     SELECT ot.overtaken_driver_id, ot.overtook_driver_id, ot.circuit_id, ot.circuit_turn_numebr
     FROM overtaking ot
     JOIN RecursiveOvertaking rec ON ot.overtook_driver_id = rec.overtaken_driver_id
@@ -256,7 +258,7 @@ AS
 SELECT overtaken_driver_id, overtook_driver_id, circuit_id, circuit_turn_numebr
 FROM RecursiveOvertaking
 
---24 
+--24 Оконные функции. Использование конструкций MIN/MAX/AVG OVER().
 SELECT DISTINCT PS.driver_id, D.surname, PS.race_id,
 AVG(PS.lap) OVER(PARTITION BY PS.driver_id, PS.race_id) AS AvgLap,
 MIN(PS.lap) OVER(PARTITION BY PS.driver_id, PS.race_id) AS MinLap,
@@ -266,18 +268,13 @@ MIN(PS.milliseconds) OVER(PARTITION BY PS.driver_id, PS.race_id) AS MinTime,
 MAX(PS.milliseconds) OVER(PARTITION BY PS.driver_id, PS.race_id) AS MaxTime
 FROM pit_stop AS PS LEFT OUTER JOIN driver AS D ON PS.driver_id = D.driver_id
 
---25 
-CREATE TABLE IF NOT EXISTS duplicate_driver AS (SELECT * FROM driver);
-
-INSERT INTO duplicate_driver
-SELECT * 
-FROM driver; 
-
-WITH rown AS (
-    SELECT driver_id, ROW_NUMBER() OVER(PARTITION BY driver_id) n
-    FROM duplicate_driver
+--25 Оконные фнкции для устранения дублей.
+DELETE FROM duplicate_driver 
+WHERE driver_id IN
+(
+    SELECT driver_id
+    FROM (
+        SELECT driver_id, ROW_NUMBER() OVER(PARTITION BY driver_id) n
+        FROM duplicate_driver
+    ) AS VV WHERE n > 1
 )
-    DELETE FROM duplicate_driver
-    WHERE driver_id in (SELECT driver_id FROM rown WHERE n <> 1);
-
-DROP TABLE IF EXISTS duplicate_airlines;
