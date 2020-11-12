@@ -314,3 +314,129 @@ CREATE TRIGGER surname_insert
 
 INSERT INTO driver (driver_id, driver_ref, driver_number, code, forename, surname, dob, nationality) 
 VALUES (844, 'sarkisov', 4, 'SAR', 'Artem', 'Sarkisov', TO_DATE('20000612', 'YYYYMMDD'), 'Russian');
+
+
+
+
+
+-- Защита:
+-- 1. Рекурсивная функция/процедура
+-- 2. Написать процедуру, которая удалит все таблицы в оперделенном временном интервале
+
+
+-- 1.
+-- The following statement creates a stored procedure 
+-- that creates a table which consists of overtaken driver id that was 
+-- overtook by driver with specified id, specified driver id, 
+-- circuit id and circuit turn number: 
+CREATE OR REPLACE PROCEDURE get_overtakings_proc(od_id INTEGER)  
+    LANGUAGE plpgsql
+AS 
+$$
+DECLARE 
+    overtaken_driver_id INTEGER; 
+    overtook_driver_id INTEGER;
+    circuit_id INTEGER;
+    circuit_turn_numebr INTEGER;
+BEGIN  
+    CREATE TABLE IF NOT EXISTS overtaken_buffer(
+        overtaken_driver_id INTEGER, 
+        overtook_driver_id INTEGER, 
+        circuit_id INTEGER, 
+        circuit_turn_numebr INTEGER
+    );
+    SELECT ot.overtaken_driver_id, ot.overtook_driver_id, ot.circuit_id, ot.circuit_turn_numebr 
+    INTO overtaken_driver_id, overtook_driver_id, circuit_id, circuit_turn_numebr 
+    FROM overtaking ot
+    WHERE ot.overtaken_driver_id = od_id;
+
+    IF FOUND THEN 
+        INSERT INTO overtaken_buffer
+        VALUES (overtaken_driver_id, overtook_driver_id, circuit_id, circuit_turn_numebr);
+        CALL get_overtakings_proc(od_id + 1);
+    END IF;
+END;
+$$;
+-- CALL get_overtakings_proc(3);
+
+
+
+-- 2.
+CREATE TABLE update_log(
+    table_name text PRIMARY KEY, 
+    updated timestamp NOT NULL DEFAULT now());
+
+
+CREATE FUNCTION stamp_update_log() 
+    RETURNS TRIGGER 
+    LANGUAGE 'plpgsql' 
+AS 
+$$
+BEGIN
+    DELETE 
+    FROM update_log 
+    WHERE table_name = TG_TABLE_NAME;
+
+    INSERT INTO update_log(table_name) 
+    VALUES(TG_TABLE_NAME);
+    RETURN NEW;
+END
+$$;
+
+CREATE TRIGGER sometable_stamp_update_log
+    AFTER INSERT OR UPDATE 
+    ON driver
+    FOR EACH STATEMENT
+    EXECUTE PROCEDURE stamp_update_log();
+
+
+CREATE OR REPLACE PROCEDURE drop_by_interval(edge_date_start_in TEXT, edge_date_end_in TEXT)  
+    LANGUAGE plpgsql
+AS 
+$$
+DECLARE 
+    tmp_table_name text;
+    edge_date_start TIMESTAMP;
+    edge_date_end TIMESTAMP;
+    tmp_date TIMESTAMP;
+    cursor_table_name CURSOR FOR
+    SELECT tablename
+    FROM pg_tables
+    WHERE schemaname = 'public';
+BEGIN 
+    edge_date_start = TO_TIMESTAMP(edge_date_start_in, 'YYYY-MM-DD HH:MI:SS');
+    edge_date_end = TO_TIMESTAMP(edge_date_end_in, 'YYYY-MM-DD HH:MI:SS');
+    IF edge_date_start >= edge_date_end THEN 
+        RAISE NOTICE 'Incorrect edges!';
+        RETURN;
+    END IF;
+
+    
+    OPEN cursor_table_name;
+    LOOP
+        FETCH cursor_table_name INTO tmp_table_name;
+        EXIT WHEN NOT FOUND;
+
+        SELECT MAX(ul.updated) 
+        INTO tmp_date
+        FROM update_log ul 
+        WHERE ul.table_name = tmp_table_name;
+
+        IF tmp_date > edge_date_start and tmp_date < edge_date_end THEN
+            EXECUTE 'DROP TABLE IF EXISTS ' || table_name || ';'; 
+            RAISE NOTICE 'Table "%" wasdeleted!', tmp_table_name;
+        END IF;
+    END LOOP;
+
+    CLOSE cursor_table_name;
+END;
+$$;
+
+
+SELECT p.tablename
+FROM pg_tables p
+WHERE p.schemaname = 'public';
+
+-- edge_date_input = '2017-03-31 9:30:20'
+
+
