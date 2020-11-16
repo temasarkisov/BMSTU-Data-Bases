@@ -56,7 +56,7 @@ CREATE OR REPLACE FUNCTION get_driver_by_nat_count()
 AS
 $$
     result_table = []
-    unique_nats = plpy.execute("\
+    unique_nats = plpy.execute("\c
         SELECT DISTINCT nationality\n\
         FROM driver;"
     )
@@ -92,8 +92,8 @@ $$
     id = plpy.execute(f"\
         SELECT driver_id\n\
         FROM driver\n\
-        WHERE surname = '{surname['surname']}';"
-        )[0]["count"]
+        WHERE surname = '{surname}';"
+        )[0]["id"]
 
     if id == none:
         plpy.notice(
