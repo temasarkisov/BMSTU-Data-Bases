@@ -198,5 +198,13 @@ CREATE OR REPLACE FUNCTION debug_driver_insert()
     LANGUAGE plpython3u
 AS
 $$
-    plpy.execute("SELECT * FROM TD['new'];")
+    plpy.execute(f"SELECT * FROM TD['new'];")
+    if TD['event'] == 'INSERT':
+        plpy.notice(
+            f"There was insertion to driver table."
+        )
+    if TD['event'] == 'DELETE':
+        plpy.notice(
+            f"There was deletion to driver table."
+        )
 $$;
