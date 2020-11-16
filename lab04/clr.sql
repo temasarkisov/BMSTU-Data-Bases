@@ -111,34 +111,27 @@ $$;
 
 
 -- 5. Триггер CLR
-CREATE OR REPLACE FUNCTION al_admin_insert() 
+CREATE OR REPLACE FUNCTION driver_insert_delete_natif() 
     RETURNS TRIGGER
     LANGUAGE plpython3u
 AS
 $$
-    surname_new = plpy.execute(f"\
-        SELECT NEW.surname\n\
-        FROM NEW\n\
-        WHERE NEW.driver_id = MAX(NEW.driver_id)"
-        )[0]["surname"]
-    
-    cnt = plpy.execute(f"\
-        SELECT COUNT(driver_id)\n\
-        FROM driver\n\
-            WHERE surname = '{surname_new}';"
-        )[0]["count"]
-
-    if cnt != 0:
-        return 
-    else:
-        return "SKIP"
+    plpy.execute(f"SELECT * FROM TD['new'];")
+    if TD['event'] == 'INSERT':
+        plpy.notice(
+            f"There was insertion to driver table."
+        )
+    if TD['event'] == 'DELETE':
+        plpy.notice(
+            f"There was deletion to driver table."
+        )
 $$;
 
--- CREATE TRIGGER is_driver_unique
---     BEFORE INSERT
---     ON driver
--- FOR EACH STATEMENT
--- EXECUTE PROCEDURE is_driver_unique_proc();
+CREATE TRIGGER driver_insert_delete_natif_tg
+    BEFORE INSERT OR DELETE
+    ON driver
+FOR EACH STATEMENT
+EXECUTE PROCEDURE driver_insert_delete_natif();
 
 
 -- 6. Определяемый пользователем тип данных CLR
@@ -164,47 +157,4 @@ $$
         WHERE d.driver_id = '{driver_id}';"
     )[0]["surname"]
     return (driver_id, surname, dob)
-$$;
-
-
-
-
-CREATE OR REPLACE FUNCTION al_admin_insert() 
-    RETURNS TRIGGER
-    LANGUAGE plpython3u
-AS
-$$
-    import datetime as dt
-
-    if plpy.execute("SELECT USER;")[0]["user"] == "postgres":
-        if len(TD["new"]["driver_id"]) != 2:
-            plpy.error(
-                f"{dt.datetime.today()}     'airlines'.INSERT --- ERROR (invalid airline_id '{TD['new']['airline_id']}')",
-                hint="Check airline_id and try again!"
-            )
-            return "SKIP"
-        else:
-            return
-    else:
-        plpy.error(
-            f"{dt.datetime.today()}     'airlines'.INSERT --- ERROR (You are not authorized to change this table)", 
-        )
-        return "SKIP"
-$$;
-
-
-CREATE OR REPLACE FUNCTION debug_driver_insert() 
-    RETURNS TRIGGER
-    LANGUAGE plpython3u
-AS
-$$
-    plpy.execute(f"SELECT * FROM TD['new'];")
-    if TD['event'] == 'INSERT':
-        plpy.notice(
-            f"There was insertion to driver table."
-        )
-    if TD['event'] == 'DELETE':
-        plpy.notice(
-            f"There was deletion to driver table."
-        )
 $$;
