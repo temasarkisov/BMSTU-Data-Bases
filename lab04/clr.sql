@@ -165,3 +165,29 @@ $$
     )[0]["surname"]
     return (driver_id, surname, dob)
 $$;
+
+
+
+
+CREATE OR REPLACE FUNCTION al_admin_insert() 
+    RETURNS TRIGGER
+    LANGUAGE plpython3u
+AS
+$$
+    import datetime as dt
+
+    if plpy.execute("SELECT USER;")[0]["user"] == "postgres":
+        if len(TD["new"]["driver_id"]) != 2:
+            plpy.error(
+                f"{dt.datetime.today()}     'airlines'.INSERT --- ERROR (invalid airline_id '{TD['new']['airline_id']}')",
+                hint="Check airline_id and try again!"
+            )
+            return "SKIP"
+        else:
+            return
+    else:
+        plpy.error(
+            f"{dt.datetime.today()}     'airlines'.INSERT --- ERROR (You are not authorized to change this table)", 
+        )
+        return "SKIP"
+$$;
