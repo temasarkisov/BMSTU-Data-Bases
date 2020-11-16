@@ -116,7 +116,6 @@ CREATE OR REPLACE FUNCTION driver_insert_delete_natif()
     LANGUAGE plpython3u
 AS
 $$
-    plpy.execute(f"SELECT * FROM TD['new'];")
     if TD['event'] == 'INSERT':
         plpy.notice(
             f"There was insertion to driver table."
