@@ -148,7 +148,7 @@ CREATE TYPE driver_t AS (
     dob DATE
 );
 
-CREATE OR REPLACE FUNCTION get_ap_capacity(driver_id INT) 
+CREATE OR REPLACE FUNCTION get_driver_info(driver_id INT) 
     RETURNS driver_t
     LANGUAGE plpython3u
 AS
