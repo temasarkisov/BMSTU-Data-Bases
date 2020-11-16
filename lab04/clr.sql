@@ -7,7 +7,7 @@ $$
     surname = plpy.execute("\
         SELECT d.surname\n\
         FROM driver d\n\
-        WHERE d.driver_id = id\n\
+        WHERE d.driver_id = '{id}'\n\
         LIMIT 1;"
     )
     
