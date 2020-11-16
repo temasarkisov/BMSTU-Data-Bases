@@ -158,5 +158,10 @@ $$
         FROM driver d\n\
         WHERE d.driver_id = '{driver_id}';"
     )[0]["dob"]
+    surname = plpy.execute(f"\
+        SELECT d.surname\n\
+        FROM driver d\n\
+        WHERE d.driver_id = '{driver_id}';"
+    )[0]["surname"]
     return (driver_id, surname, dob)
 $$;
