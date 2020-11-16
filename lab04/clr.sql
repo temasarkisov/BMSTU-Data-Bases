@@ -93,15 +93,15 @@ $$
         SELECT driver_id\n\
         FROM driver\n\
         WHERE surname = '{surname}';"
-        )[0]["id"]
+        )[0]["driver_id"]
 
-    if id == none:
+    if id == 0:
         plpy.notice(
             f"There is no driver with '{surname}' surname."
         )
     else:
         plpy.notice(
-            f"There is '{id}' driver for driver with '{surname}' surname."
+            f"There is id '{id}' for driver with '{surname}' surname."
         )
 $$;
 
@@ -119,8 +119,8 @@ $$
     surname_new = plpy.execute(f"\
         SELECT NEW.surname\n\
         FROM NEW\n\
-        WHERE NEW.driver_id = MAX(NEW.driver_id)
-        )[0]["count"]"
+        WHERE NEW.driver_id = MAX(NEW.driver_id)"
+        )[0]["surname"]
     
     cnt = plpy.execute(f"\
         SELECT COUNT(driver_id)\n\
@@ -148,7 +148,7 @@ CREATE TYPE driver_t AS (
     dob DATE
 );
 
-CREATE OR REPLACE FUNCTION get_ap_capacity(driver_id INT, surname VARCHAR) 
+CREATE OR REPLACE FUNCTION get_ap_capacity(driver_id INT) 
     RETURNS driver_t
     LANGUAGE plpython3u
 AS
@@ -156,8 +156,7 @@ $$
     dob = plpy.execute(f"\
         SELECT d.dob\n\
         FROM driver d\n\
-        WHERE d.surname = '{surname}' AND\n\
-            d.driver_id = '{driver_id}';"
+        WHERE d.driver_id = '{driver_id}';"
     )[0]["dob"]
     return (driver_id, surname, dob)
 $$;
