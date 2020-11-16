@@ -191,3 +191,12 @@ $$
         )
         return "SKIP"
 $$;
+
+
+CREATE OR REPLACE FUNCTION debug_driver_insert() 
+    RETURNS TRIGGER
+    LANGUAGE plpython3u
+AS
+$$
+    plpy.execute("SELECT * FROM TD['new'];")
+$$;
