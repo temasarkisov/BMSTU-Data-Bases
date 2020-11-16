@@ -1,10 +1,10 @@
 -- 1. Определяемую пользователем скалярную функцию CLR,
-CREATE OR REPLACE FUNCTION get_surname_by_id(id INT) 
+CREATE OR REPLACE FUNCTION get_surname_by_id(id INTEGER) 
     RETURNS TEXT
     LANGUAGE plpython3u
 AS
 $$
-    surname = plpy.execute("\
+    surname = plpy.execute(f"\
         SELECT d.surname\n\
         FROM driver d\n\
         WHERE d.driver_id = '{id}'\n\
@@ -37,7 +37,7 @@ $$
 $$;
 
 CREATE OR REPLACE AGGREGATE max_age(DATE) (
-    sfunc = _agg_oldest_ac,
+    sfunc = _agg_oldest,
     stype = DATE,
     initcond = '5999-12-31'
 );
@@ -49,27 +49,27 @@ CREATE OR REPLACE AGGREGATE max_age(DATE) (
 -- 3. Определяемая пользователем табличная функция CLR
 CREATE OR REPLACE FUNCTION get_driver_by_nat_count() 
     RETURNS TABLE(
-        surname TEXT,
+        nationality TEXT,
         cnt INT
     )
     LANGUAGE plpython3u
 AS
 $$
     result_table = []
-    unique_surnames = plpy.execute("\
-        SELECT DISTINCT surname\n\
+    unique_nats = plpy.execute("\
+        SELECT DISTINCT nationality\n\
         FROM driver;"
     )
     
-    for surname in unique_surnames:
-        if surname["surname"] != '-':
+    for nationality in unique_nats:
+        if nationality["nationality"] != '-':
             result_table.append(
                 {
-                    "surname": surname["surname"],
+                    "nationality": nationality["nationality"],
                     "cnt": plpy.execute(f"\
                         SELECT COUNT(driver_id)\n\
                         FROM driver\n\
-                        WHERE surname = '{surname['surname']}';"
+                        WHERE nationality = '{nationality['nationality']}';"
                     )[0]["count"]
                 }
             )
