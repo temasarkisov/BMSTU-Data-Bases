@@ -157,3 +157,27 @@ $$
     )[0]["surname"]
     return (driver_id, surname, dob)
 $$;
+
+
+CREATE TABLE driver_test (driver_info driver_t)
+
+INSERT INTO driver_test 
+    SELECT get_driver_info(1); 
+INSERT INTO driver_test 
+    SELECT get_driver_info(2);
+INSERT INTO driver_test 
+    SELECT get_driver_info(3);
+
+
+
+SELECT (driver_info::driver_t).surname surname
+FROM driver_test
+WHERE driver_info IN (
+    SELECT get_driver_info(1)
+);
+
+DELETE FROM testing
+WHERE (info::daydata_t).cnt < 350;
+
+UPDATE testing
+SET info = ((info::daydata_t).iata, '5999-12-31', (info::daydata_t).cnt);
