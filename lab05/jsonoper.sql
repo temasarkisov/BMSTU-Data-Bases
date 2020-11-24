@@ -95,7 +95,7 @@ AS
 $$
 BEGIN 
     CREATE TABLE IF NOT EXISTS artist ( 
-        artist_info json 
+        artist_info JSON 
     );
     DELETE FROM artist;
     COPY artist 
@@ -117,7 +117,7 @@ AS
 $$
 BEGIN 
     CREATE TABLE IF NOT EXISTS artist ( 
-        artist_info json 
+        artist_info JSON 
     );
     DELETE FROM artist;
     COPY artist 
@@ -132,8 +132,7 @@ END;
 $$;
 
 
--- 4.3
--- Checks by specified path if snippet or value exists. 
+-- 4.3 Checks by specified path if snippet or value exists. 
 CREATE OR REPLACE PROCEDURE is_snippet_exist()  
     LANGUAGE PLPGSQL
 AS 
@@ -143,7 +142,7 @@ DECLARE
 BEGIN 
     object_tmp = '';
     CREATE TABLE IF NOT EXISTS artist ( 
-        artist_info json 
+        artist_info JSON 
     );
     DELETE FROM artist;
     COPY artist 
@@ -161,5 +160,64 @@ BEGIN
 END
 $$;
 
+-- 4.4 Edits JSON file.
+CREATE OR REPLACE PROCEDURE edit_json_file()  
+    LANGUAGE PLPGSQL
+AS 
+$$
+BEGIN 
+    CREATE TABLE IF NOT EXISTS artist ( 
+        artist_info JSON 
+    );
+    DELETE FROM artist;
+    COPY artist 
+    FROM '/Users/temasarkisov/OwnProjects/BMSTU/BMSTU-Data-Bases/lab05/artist.json';
+
+    UPDATE artist
+    SET artist_info = '{"name":"Gunna","album":{"interlude": "ARGENTINA", "hit": "TOP FLOOR"}}';
+
+    COPY (
+	    SELECT artist_info
+        FROM artist
+    ) TO '/Users/temasarkisov/OwnProjects/BMSTU/BMSTU-Data-Bases/lab05/artist.json';
+
+    DROP TABLE artist;
+END
+$$;
 
 
+-- 4.5
+CREATE OR REPLACE PROCEDURE split_json_file()  
+    LANGUAGE PLPGSQL
+AS 
+$$
+DECLARE 
+    object_tmp TEXT;
+    cursor_json_object CURSOR FOR
+    SELECT artist_info
+    FROM artist;
+BEGIN 
+    CREATE TABLE IF NOT EXISTS artist ( 
+        artist_info JSONB
+    );
+    DELETE FROM artist;
+    COPY artist
+    FROM '/Users/temasarkisov/OwnProjects/BMSTU/BMSTU-Data-Bases/lab05/artist.json';
+
+    SELECT jsonb_pretty(artist_info)
+    INTO object_tmp
+    FROM artist;
+
+    raise notice '%', object_tmp;
+
+    COPY (
+	    SELECT jsonb_pretty(artist_info)
+        FROM artist
+    ) TO '/Users/temasarkisov/OwnProjects/BMSTU/BMSTU-Data-Bases/lab05/artist_pretty.json';
+
+    DROP TABLE artist;
+END
+$$;
+
+
+    
