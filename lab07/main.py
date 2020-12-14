@@ -2,9 +2,13 @@ from peewee import *
 import json
 from playhouse.postgres_ext import *
 
-conn = PostgresqlDatabase('formula_1', user='postgres', password='qwerty',
-                           host='localhost')
+conn = PostgresqlDatabase('formula_1', 
+                          user='postgres', 
+                          password='qwerty',
+                          host='localhost'
+                          )
 cursor = conn.cursor()
+db = PostgresqlExtDatabase('formula_1')
 
 class BaseModel(Model):
     class Meta:
@@ -41,12 +45,13 @@ class Result(BaseModel):
     class Meta:
         table_name = 'result'
 
-class DriverPassport(Model):
-    passport_number = IntegerField(column_name='passport_number')
-    name = JSONField(column_name='name')
+class DriverPassport(BaseModel):
+    passport_number = IntegerField(column_name='passport_number', primary_key=True)
+    driver_name = JSONField(column_name='driver_name')
 
     class Meta:
         table_name = 'driver_passport'
+        #database = db
 
 
 
@@ -85,11 +90,21 @@ def SelectFrom():
     return query
 
 # 2.1 Reading from JSON document.
-def JSONReadingQuery():
-    query = (DriverPassport.select(DriverPassport.name)) 
-    print(query)
+def JSONReadQuery():
+    query = (DriverPassport.select(DriverPassport.driver_name["surname"].alias("surname"))
+                           .where(DriverPassport.driver_name["surname"] == "Hamilton"))
     return query
 
+# 2.2 Update JSON document.
+def JSONUpdateQuery():
+    query = (DriverPassport.update(driver_name={'forename': 'Tema', 'surname': 'Sarkisov'})
+                           .where(DriverPassport.driver_name["surname"] == "Sarkisov")).execute()
+
+# 2.3 Insert JSON document.
+def JSONInsertQuery():
+    query = (DriverPassport.insert(passport_number = 1532546, 
+                                   driver_name={'forename': 'Vasya', 'surname': 'Pupkin'})).execute()
+                    
 # 3.1 Single table query request.
 def SingleTableQuery():
     query = (Driver.select(Driver.surname, Driver.nationality)
@@ -131,13 +146,18 @@ def UpdateDataQuery():
 def CallStoredProcedure(cursor):
     cursor.callproc('get_driver_age')
 
+
 def ApplyQuery(queryFunc):
-    driver_selected = queryFunc().dicts().execute()
-    for driver in driver_selected:
-        print(driver)
+    data_selected = queryFunc().dicts().execute()
+    for data in data_selected:
+        print(data)
 
 
-ApplyQuery(JSONReadingQuery)
+#ApplyQuery(...)
+
+#JSONUpdateQuery()
+#JSONInsertQuery()
+
 #InsertDataQuery()
 #UpdateDataQuery()
 #DeleteDataQuery()
